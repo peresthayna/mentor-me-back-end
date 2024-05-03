@@ -17,7 +17,6 @@ public class RespostaController {
     @Autowired
     private RespostaService respostaService;
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/publicacao/{idPublicacao}")
     public PageResponseDTO<RespostaConsultaDTO> recuperarPorPublicacao(PaginationRequest request, @PathVariable Long idPublicacao) {
         return RespostaConsultaDTO.converterParaPageResponseDTO(this.respostaService.recuperarPorPublicacao(request, idPublicacao));

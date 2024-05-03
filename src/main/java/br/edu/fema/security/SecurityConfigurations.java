@@ -39,6 +39,8 @@ public class SecurityConfigurations {
                         this.permitirRota(authorizeConfig, HttpMethod.POST, "/publicacao/view/**");
                         this.permitirRota(authorizeConfig, HttpMethod.GET, "/tag/**");
                         this.permitirRota(authorizeConfig, HttpMethod.GET, "/usuarios/**");
+                        this.permitirRota(authorizeConfig, HttpMethod.GET, "/avaliacao/**");
+                        this.permitirRota(authorizeConfig, HttpMethod.GET, "/resposta/**");
 						authorizeConfig.requestMatchers(HttpMethod.OPTIONS).permitAll();
 						authorizeConfig.anyRequest().authenticated();
                 })

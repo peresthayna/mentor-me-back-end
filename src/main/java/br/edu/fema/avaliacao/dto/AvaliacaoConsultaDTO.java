@@ -20,10 +20,12 @@ public class AvaliacaoConsultaDTO {
     private int nota;
 
     public AvaliacaoConsultaDTO(Avaliacao avaliacao) {
-        this.id = avaliacao.getId();
-        this.usuario = new UsuarioConsultaDTO(avaliacao.getUsuario());
-        this.resposta = new RespostaConsultaDTO(avaliacao.getResposta());
-        this.nota = avaliacao.getNota();
+        if(avaliacao != null) {
+            this.id = avaliacao.getId();
+            this.usuario = new UsuarioConsultaDTO(avaliacao.getUsuario());
+            this.resposta = new RespostaConsultaDTO(avaliacao.getResposta());
+            this.nota = avaliacao.getNota();
+        }
     }
 
     public static List<AvaliacaoConsultaDTO> converterParaListDTO(List<Avaliacao> avaliacoes) {

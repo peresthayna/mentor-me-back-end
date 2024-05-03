@@ -22,11 +22,13 @@ public class UsuarioController {
 	public PageResponseDTO<UsuarioConsultaDTO> recuperarTodosPaginados(PaginationRequest request) {
 		return UsuarioConsultaDTO.converterParaPageResponseDTO(this.usuarioService.recuperarTodosPaginados(request));
 	}
+
 	@GetMapping("/usuario-ativo")
 	public UsuarioConsultaDTO recuperarUsuarioSession() {
 		return new UsuarioConsultaDTO(usuarioService.getUsuarioDaSession());
 	}
 
+	@PreAuthorize("hasRole('ROLE_USER')")
 	@GetMapping("/{id}")
 	public UsuarioConsultaDTO recuperarPorId(@PathVariable Long id) {
 		return new UsuarioConsultaDTO((usuarioService.findById(id)));

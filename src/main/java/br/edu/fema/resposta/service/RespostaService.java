@@ -1,5 +1,7 @@
 package br.edu.fema.resposta.service;
 
+import br.edu.fema.avaliacao.domain.Avaliacao;
+import br.edu.fema.avaliacao.service.AvaliacaoService;
 import br.edu.fema.generics.PaginationRequest;
 import br.edu.fema.publicacao.domain.Publicacao;
 import br.edu.fema.publicacao.dto.PublicacaoCadastroDTO;
@@ -25,6 +27,8 @@ public class RespostaService {
     private UsuarioService usuarioService;
     @Autowired
     private PublicacaoService publicacaoService;
+    @Autowired
+    private AvaliacaoService avaliacaoService;
 
     public Page<Resposta> recuperarPorPublicacao(PaginationRequest request, Long idPublicacao) {
         Publicacao publicacao = this.publicacaoService.recuperarPorId(idPublicacao);
@@ -33,15 +37,21 @@ public class RespostaService {
 
     public Resposta atualizarNota(Long idResposta, int nota) {
         Resposta resposta = this.respostaRepository.findById(idResposta).orElse(null);
-        if(resposta != null) {
-            Usuario usuario = resposta.getUsuario();
-            usuario.setPontuacao(nota * 10);
-            usuarioService.salvar(usuario);
-            resposta.setNumeroAvaliacoes(resposta.getNumeroAvaliacoes() + 1);
-            resposta.setMediaAvaliacoes((nota + resposta.getMediaAvaliacoes()) / resposta.getNumeroAvaliacoes());
-            return this.respostaRepository.save(resposta);
+        if(resposta == null) {
+            throw new IllegalArgumentException("Resposta não encontrada");
         }
-        throw new IllegalArgumentException("Resposta não encontrada");
+        Usuario usuario = resposta.getUsuario();
+        usuario.setPontuacao(nota * 10);
+        usuarioService.salvar(usuario);
+        Usuario usuarioNaSession = this.usuarioService.getUsuarioDaSession();
+        Avaliacao avaliacao = new Avaliacao();
+        avaliacao.setResposta(resposta);
+        avaliacao.setNota(nota);
+        avaliacao.setUsuario(usuarioNaSession);
+        avaliacaoService.salvarAvaliacao(avaliacao);
+        resposta.setNumeroAvaliacoes(resposta.getNumeroAvaliacoes() + 1);
+        resposta.setMediaAvaliacoes((nota + resposta.getMediaAvaliacoes()) / resposta.getNumeroAvaliacoes());
+        return this.respostaRepository.save(resposta);
     }
     public Resposta recuperarPorId(Long id) {
         return this.respostaRepository.findById(id).orElse(null);
